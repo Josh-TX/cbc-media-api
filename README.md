@@ -1,43 +1,24 @@
-# Craft CBC Media plugin for Craft CMS 3.x
+# CBC Media API
 
-Get the CBC Media Feed
+## Install Node
+You can do this using Node's own installers: https://nodejs.org/en/download/, or a package manager like homebrew:
 
-![Screenshot](resources/img/plugin-logo.png)
+    $ brew install node
 
-## Requirements
+## Download the Code
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+Download the code from https://github.com/countrysidebible/cbc-media-api, to wherever you want this app to live.
 
-## Installation
+## Install the Dependencies
 
-To install the plugin, follow these instructions.
+Open your console, and navigate to where you downloaded the app.
 
-1. Open your terminal and go to your Craft project:
+    $ cd path/to/your/project/dir/
 
-        cd /path/to/project
+Install the dependencies
 
-2. Then tell Composer to load the plugin:
+    $ npm install
 
-        composer require cbcsouthlake/craft-cbc-media
+## Run the App
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Craft CBC Media.
-
-## Craft CBC Media Overview
-
--Insert text here-
-
-## Configuring Craft CBC Media
-
--Insert text here-
-
-## Using Craft CBC Media
-
--Insert text here-
-
-## Craft CBC Media Roadmap
-
-Some things to do, and ideas for potential features:
-
-* Release it
-
-Brought to you by [Andrew Hale](thisanimus.com)
+    $ npm run dev

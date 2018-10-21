@@ -1,0 +1,34 @@
+{
+  "name": "cbc-media-api",
+  "version": "1.0.0",
+  "description": "REST API to manage and access the media of Countryside Bible Church.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/countrysidebible/cbc-media-api.git"
+  },
+  "keywords": [
+    "API",
+    "Node",
+    "Express",
+    "Mongo"
+  ],
+  "author": "Countryside Bible Church",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/countrysidebible/cbc-media-api/issues"
+  },
+  "homepage": "https://github.com/countrysidebible/cbc-media-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.8",
+    "npm": "^6.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
