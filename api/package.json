@@ -1,0 +1,32 @@
+{
+  "name": "cbc-media-api",
+  "version": "1.0.0",
+  "description": "a mean stack implementation of the countryside API",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\"",
+    "start": "nodemon ./dist/app.js",
+    "prod": "npm run build && npm run start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.0",
+    "@types/mongodb": "^3.1.4",
+    "@types/node": "^10.9.4",
+    "@types/swagger-ui-express": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "express-promise-router": "^3.0.3",
+    "mongodb": "^3.1.5",
+    "swagger-ui-express": "^4.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^4.0.1",
+    "nodemon": "^1.18.4",
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.3"
+  }
+}
