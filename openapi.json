@@ -1,0 +1,271 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CBC Media API",
+    "description": "This is the API specification for the CBC Media API",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Old API docs",
+    "url": "https://api.countrysidebible.org/"
+  },
+  "servers": [
+    {
+      "url": "http://23.236.59.106/",
+      "description": "Josh's Server"
+    }
+  ],
+  "paths": {
+    "/media/{id}": {
+      "get": {
+        "summary": "Get Media by Id",
+        "description": "returns a media item with a matching ObjectID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mongodb ObjectID of the media item",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaItem"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content - media item not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify Media by Id",
+        "description": "modifies an existing media item with a matching ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mongodb ObjectID of the media item",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateMediaRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "Success - media item modified"
+          },
+          "204": {
+            "description": "No Content - media item not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Media by Id",
+        "description": "deletes media item with a matching ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mongodb ObjectID of the media item",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success - media item deleted"
+          },
+          "204": {
+            "description": "No Content - media item not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MediaItem": {
+        "required": [
+          "category",
+          "date",
+          "filesize",
+          "mediacode",
+          "teacher",
+          "text",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "mediacode": {
+            "maxLength": 12,
+            "minLength": 8,
+            "type": "string",
+            "description": "a unique indentifier string"
+          },
+          "date": {
+            "type": "string",
+            "description": "the date the media was created (or uploaded?)",
+            "format": "date"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the media"
+          },
+          "teacher": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "the full name of the creator of the media source"
+          },
+          "text": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "A Bible reference related to the media"
+          },
+          "series": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "the name of the series that this media is a part of"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the media. Must be one of 6 values",
+            "enum": [
+              "Adult Sunday School",
+              "College",
+              "Youth",
+              "Sermons",
+              "Workshops",
+              "Special Services"
+            ]
+          },
+          "class": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the class (usually a sunday school class) responsible for this media"
+          },
+          "files": {
+            "type": "string",
+            "description": "I don't think we need this property"
+          },
+          "mp3": {
+            "type": "string",
+            "description": "a URL to the location that the mp3 audio is hosted",
+            "format": "url"
+          },
+          "mp4": {
+            "type": "string",
+            "description": "a URL to the location that the mp4 video is hosted",
+            "format": "url"
+          },
+          "duration": {
+            "pattern": "^(\\d?\\d:)?\\d\\d:\\d\\d$",
+            "type": "string",
+            "description": "the duration of the video/audio"
+          },
+          "filesize": {
+            "type": "number",
+            "description": "the filesize (in bytes) of the media"
+          }
+        }
+      },
+      "UpdateMediaRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the media"
+          },
+          "teacher": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "the full name of the creator of the media source"
+          },
+          "text": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "A Bible reference related to the media"
+          },
+          "series": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "the name of the series that this media is a part of"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the media. Must be one of 6 values",
+            "enum": [
+              "Adult Sunday School",
+              "College",
+              "Youth",
+              "Sermons",
+              "Workshops",
+              "Special Services"
+            ]
+          },
+          "class": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the class (usually a sunday school class) responsible for this media"
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "UpdateMediaRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UpdateMediaRequest"
+            }
+          }
+        }
+      }
+    }
+  }
+}
