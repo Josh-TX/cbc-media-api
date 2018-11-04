@@ -5,7 +5,7 @@ import { MediaFileEntity } from "./MediaFileEntity";
 
 export class MediaEntity {
     mediaCode: string;
-    dateRecorded: string;
+    dateRecorded: Date;
     title: string;
     teacher: SimpleTeacherEntity;
     text: TextEntity;
@@ -19,7 +19,7 @@ export class MediaEntity {
     mp4: string;
     vimeoId: string;
     youtubeId: string;
-    slides: string;
-    outline: string;
-    duration: string; 
+    slidesUrl: string;
+    outlineUrl: string;
+    transcriptUrl: string; 
 }

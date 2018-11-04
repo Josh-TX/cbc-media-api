@@ -1,6 +1,6 @@
 import { SimpleSeries } from "./SimpleSeries";
 import { MediaFile } from "./MediaFile";
-import { SimpleTeacher } from "./SimpleTeacherEntity";
+import { SimpleTeacher } from "./SimpleTeacher";
 
 export class Media {
     mediaCode: string;
@@ -18,7 +18,7 @@ export class Media {
     mp4: string;
     vimeoId: string;
     youtubeId: string;
-    slides: string;
-    outline: string;
-    duration: string;
+    slidesUrl: string;
+    outlineUrl: string;
+    transcriptUrl: string;
 }
