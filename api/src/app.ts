@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { MediaRoute } from './routes/media';
+import { MediaRoute } from './routes/MediaRoute';
 import config from './config';
 import * as swaggerUi from 'swagger-ui-express';
 import * as fs from 'fs';
@@ -25,7 +25,7 @@ class App {
         this.app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
         this.app.use("/", express.static(config.staticDirectory));
         var url = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.db}`;
-        console.log("connecting too " + url)
+        console.log("connecting to " + url)
         var client = await MongoClient.connect(url, {useNewUrlParser: true});
         var router = ExpressPromiseRouter();
         this.app.use("/", router);

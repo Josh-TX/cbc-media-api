@@ -6,11 +6,8 @@
         "sourceMap": false,
         "target": "es2017",
         "outDir": "./dist",
-        "rootDirs": [
-            "../models"
-        ],
         "baseUrl": "./src",
-        "noImplicitAny": true,
+        "noImplicitAny": true
     },
     "include": [
         "src/**/*.ts"
