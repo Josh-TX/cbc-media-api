@@ -1,7 +1,5 @@
-import { ObjectId } from "bson";
-
-export class TeacherEntity {
-    _id: ObjectId;
+export class Teacher {
+    _id: string;
     firstName: string;
     lastName: string;
     fullName: string;

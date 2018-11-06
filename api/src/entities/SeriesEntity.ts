@@ -1,5 +1,7 @@
+import { ObjectId } from "bson";
+
 export class SeriesEntity {
-    _id: string;
+    _id: ObjectId;
     title: string;
     description: string;
     image: string;

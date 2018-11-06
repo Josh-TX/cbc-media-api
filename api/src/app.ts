@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import { MediaRoute } from './routes/MediaRoute';
+import { TeacherRoute } from "./routes/TeacherRoute";
 import config from './config';
 import * as swaggerUi from 'swagger-ui-express';
 import * as fs from 'fs';
@@ -30,6 +31,7 @@ class App {
         var router = ExpressPromiseRouter();
         this.app.use("/", router);
         new MediaRoute(router, client.db(config.mongodb.db));
+        new TeacherRoute(router, client.db(config.mongodb.db));
         router.use(this.handleErrors);
 
         this.app.listen(config.port, () => {

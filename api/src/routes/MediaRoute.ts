@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as express from "express";
-import { Db, ObjectID } from "mongodb";
+import { Db } from "mongodb";
 import { UpdateMediaRequest } from "../models/UpdateMediaRequest";
 import { CreateMediaRequest } from "../models/CreateMediaRequest";
 import { Media } from "../models/Media";
@@ -12,6 +12,8 @@ import * as helpers from "../helpers/helpers";
 import { MediaEntity } from "../entities/MediaEntity";
 import { TextEntity } from "../entities/TextEntity";
 import { MediaFile } from "../models/MediaFile";
+import { SimpleTeacherEntity } from "../entities/SimpleTeacherEntity";
+import { SimpleSeriesEntity }from "../entities/SimpleSeriesEntity";
 
 export class MediaRoute {
     db: Db
@@ -25,20 +27,21 @@ export class MediaRoute {
     }
 
     async getMediaByCode(req: Request, res: Response){
-        const code = req.params.code;
-        let entity: MediaEntity = await this.db.collection("media").findOne({"mediaCode": code});
+        let code = req.params.code;
+        let filter: Partial<MediaEntity> = {"mediaCode": code};
+        let entity: MediaEntity = await this.db.collection("media").findOne(filter);
         if (entity == null){
             res.status(400).send("failed to find media for mediaCode " + code);
             return;
         }
         let media = new Media();
         media.teacher = new SimpleTeacher();
-        media.teacher._id = entity.teacher._id;
+        media.teacher._id = entity.teacher._id.toHexString();
         media.teacher.firstName = entity.teacher.firstName;
         media.teacher.lastName = entity.teacher.lastName;
         media.teacher.fullName = entity.teacher.fullName;
         media.series = new SimpleSeries();
-        media.series._id = entity.series._id;
+        media.series._id = entity.series._id.toHexString();
         media.series.title = entity.series.title;
         media.series.image = entity.series.image;
         media.series.imageSquare = entity.series.imageSquare;
@@ -78,62 +81,125 @@ export class MediaRoute {
             res.status(400).send(errorMessage);
             return;
         }
+
         let results = await Promise.all([
-            this.db.collection("teacher").findOne({ '_id': new ObjectID(request.teacherId) }),
-            this.db.collection("series").findOne({ '_id': new ObjectID(request.seriesId) })
+            this.getTeacherById(request.teacherId),
+            this.getSeriesById(request.seriesId)
         ]);
-        let teacher = <TeacherEntity>results[0];
-        if (teacher == null){
-            res.status(400).send("failed to find teacher for _id " + request.teacherId);
+        let teacherResult = results[0];
+        if (typeof teacherResult == "string"){
+            res.status(400).send(teacherResult);
             return;
         }
-        let series = <SeriesEntity>results[1];
-        if (series == null){
-            res.status(400).send("failed to find series for _id " + request.seriesId);
+        let seriesResult = results[1];
+        if (typeof seriesResult == "string"){
+            res.status(400).send(seriesResult);
             return;
         }
-        let now = new Date();
+
         let dateRecorded = new Date(request.dateRecorded);
-        let media = new MediaEntity();
-        media.teacher = new SimpleTeacher();
-        media.teacher._id = teacher._id;
-        media.teacher.firstName = teacher.firstName;
-        media.teacher.lastName = teacher.lastName;
-        media.teacher.fullName = teacher.fullName;
-        media.series = new SimpleSeries();
-        media.series._id = series._id;
-        media.series.title = series.title;
-        media.series.image = series.image;
-        media.series.imageSquare = series.imageSquare;
-        media.text = new TextEntity();
+        let mediaEntity = new MediaEntity();
+        mediaEntity.teacher = new SimpleTeacherEntity();
+        mediaEntity.teacher._id = teacherResult._id;
+        mediaEntity.teacher.firstName = teacherResult.firstName;
+        mediaEntity.teacher.lastName = teacherResult.lastName;
+        mediaEntity.teacher.fullName = teacherResult.fullName;
+        mediaEntity.series = new SimpleSeriesEntity();
+        mediaEntity.series._id = seriesResult._id;
+        mediaEntity.series.title = seriesResult.title;
+        mediaEntity.series.image = seriesResult.image;
+        mediaEntity.series.imageSquare = seriesResult.imageSquare;
+        mediaEntity.text = new TextEntity();
         //todo: convert text string to TextEntity
 
-        media.mediaCode = helpers.getMediaCode(dateRecorded, request.category);
-        media.dateRecorded = dateRecorded;
-        media.title = request.title;
-        media.category = request.category;
-        media.subCategory = request.subCategory;
-        media.part = request.part;
+        mediaEntity.mediaCode = helpers.getMediaCode(dateRecorded, request.category);
+        mediaEntity.dateRecorded = dateRecorded;
+        mediaEntity.title = request.title;
+        mediaEntity.category = request.category;
+        mediaEntity.subCategory = request.subCategory;
+        mediaEntity.part = request.part;
 
-        let dbResult = await this.db.collection("media").insertOne(media);
-        res.send(media.mediaCode);
+        let dbResult = await this.db.collection("media").insertOne(mediaEntity);
+        res.send(mediaEntity.mediaCode);
     }
 
     async updateMediaByCode(req: Request, res: Response){
-        const code = req.params.code;
-        const request = new UpdateMediaRequest(req.body);
+        let code = req.params.code;
+        let request = new UpdateMediaRequest(req.body);
         let errorMessage = request.validate();
         if (errorMessage){
             res.status(400).send(errorMessage);
             return;
         }
-        let dbResult = await this.db.collection("media").updateOne({"mediaCode": code}, {$set: request});
+        let filter: Partial<MediaEntity> = {"mediaCode": code};
+        let setProperties: Partial<MediaEntity> = {};
+
+        if (request.teacherId){
+            let teacherResult = await this.getTeacherById(request.teacherId);
+            if (typeof teacherResult == "string"){
+                res.status(400).send(teacherResult);
+                return;
+            }
+            setProperties.teacher = new SimpleTeacherEntity();
+            setProperties.teacher._id = teacherResult._id;
+            setProperties.teacher.firstName = teacherResult.firstName;
+            setProperties.teacher.lastName = teacherResult.lastName;
+            setProperties.teacher.fullName = teacherResult.fullName;
+        }
+        if (request.seriesId){
+            let seriesResult = await this.getSeriesById(request.seriesId);
+            if (typeof seriesResult == "string"){
+                res.status(400).send(seriesResult);
+                return;
+            }
+            setProperties.series = new SimpleSeriesEntity();
+            setProperties.series._id = seriesResult._id;
+            setProperties.series.title = seriesResult.title;
+            setProperties.series.image = seriesResult.image;
+            setProperties.series.imageSquare = seriesResult.imageSquare;
+        }
+        setProperties.title = request.title;
+        //todo: allow updated TextEntity
+        //setProperties.text = request.text
+
+
+        let dbResult = await this.db.collection("media").updateOne(filter, {$set: setProperties});
         res.json(dbResult);
     }
     
     async deleteMediaByCode(req: Request, res: Response){
-        const code = req.params.code;
-        let dbResult = await this.db.collection("media").deleteOne({"mediaCode": code});
-        res.send(200);
+        let code = req.params.code;
+        let filter: Partial<MediaEntity> = {"mediaCode": code};
+        let dbResult = await this.db.collection("media").deleteOne(filter);
+        let statusCode = dbResult.deletedCount ? 200 : 204;
+        res.send(statusCode);
+    }
+
+    private async getTeacherById(id: string): Promise<TeacherEntity | string>{
+        let teacherObjectId = helpers.tryParseObjectId(id);
+        if (!teacherObjectId){
+            return "failed to parse teacherId '" +  id + "' into an ObjectId";
+        }
+        let teacherFilter: Partial<TeacherEntity> = { '_id': teacherObjectId };
+        return this.db.collection("teacher").findOne(teacherFilter).then(teacherEntity => {
+            if (!teacherEntity){
+                return "failed to find teacher for _id " + id;
+            }
+            return teacherEntity;
+        });
+    }
+
+    private async getSeriesById(id: string): Promise<SeriesEntity | string>{
+        let seriesObjectId = helpers.tryParseObjectId(id);
+        if (!seriesObjectId){
+            return "failed to parse seriesId '" +  id + "' into an ObjectId";
+        }
+        let seriesFilter: Partial<SeriesEntity> = { '_id': seriesObjectId };
+        return this.db.collection("teacher").findOne(seriesFilter).then(seriesEntity => {
+            if (!seriesEntity){
+                return "failed to find series for _id " + id;
+            }
+            return seriesEntity;
+        });
     }
 }

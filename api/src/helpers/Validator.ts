@@ -47,6 +47,7 @@ class PropValidator<T>{
     typeOf(type: "string" | "number" | "boolean" | "symbol" | "object" | "function"): PropValidator<T>{
         if (!this.finished && typeof this.value != type){
             this.errorContainer.error = this.key + " must be typeof " + type;
+            this.finished = true;
         }
         return this;
     }
@@ -61,7 +62,7 @@ class PropValidator<T>{
 
     notEmpty(): PropValidator<T>{
         if (!this.finished && !this.value.length){
-            this.errorContainer.error = this.key + " cannot be empty";
+            this.errorContainer.error = this.key + " must not be empty";
             this.finished = true;
         }
         return this;
@@ -101,7 +102,7 @@ class PropValidator<T>{
 
     objectId(): PropValidator<T>{
         if (!this.finished && !/^[a-f\d]{24}$/.test(this.value)){
-            this.errorContainer.error = this.key + " is not a valid ObjectId";
+            this.errorContainer.error = this.key + " must be a valid ObjectId";
             this.finished = true;
         }
         return this;
@@ -109,7 +110,15 @@ class PropValidator<T>{
 
     dateString(): PropValidator<T>{
         if (!this.finished && isNaN(Date.parse(this.value))){
-            this.errorContainer.error = this.key + " cannot be parsed into a date";
+            this.errorContainer.error = this.key + " must be a date";
+            this.finished = true;
+        }
+        return this;
+    }
+
+    url(): PropValidator<T>{
+        if (!this.finished && /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.value)){
+            this.errorContainer.error = this.key + " must be a valid url";
             this.finished = true;
         }
         return this;
