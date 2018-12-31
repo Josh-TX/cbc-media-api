@@ -13,7 +13,7 @@ export class CreateMediaRequest{
     tags: string[];
 
     constructor(obj?: CreateMediaRequest){
-        if (typeof obj != "object"){
+        if (typeof obj != "object" || !obj){
             return;
         }
         this.dateRecorded = obj.dateRecorded;

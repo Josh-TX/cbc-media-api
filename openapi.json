@@ -15,9 +15,23 @@
 			"description": "Josh's Server"
 		}
 	],
+	"tags": [
+		{
+			"name": "media"
+		},
+		{
+			"name": "teacher"
+		},
+		{
+			"name": "series"
+		}
+	],
 	"paths": {
 		"/media": {
 			"post": {
+				"tags": [
+					"media"
+				],
 				"summary": "Post Media",
 				"description": "creates a new Media object and returns the MediaCode",
 				"requestBody": {
@@ -35,13 +49,16 @@
 		},
 		"/media/{MediaCode}": {
 			"get": {
+				"tags": [
+					"media"
+				],
 				"summary": "Get Media by MediaCode",
 				"description": "returns a Media object with a matching MediaCode",
 				"parameters": [
 					{
 						"name": "MediaCode",
 						"in": "path",
-						"description": "The MediaCode of the media to get",
+						"description": "The MediaCode of the Media to get",
 						"required": true,
 						"style": "simple",
 						"explode": false,
@@ -62,7 +79,7 @@
 						}
 					},
 					"204": {
-						"description": "No Content - media item not found"
+						"description": "No Content - Media object not found"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -70,6 +87,9 @@
 				}
 			},
 			"put": {
+				"tags": [
+					"media"
+				],
 				"summary": "Modify Media by MediaCode",
 				"description": "modifies an existing Media object with the specified MediaCode",
 				"parameters": [
@@ -90,10 +110,10 @@
 				},
 				"responses": {
 					"200": {
-						"description": "Success - Media item modified"
+						"description": "Success - Media object modified"
 					},
 					"204": {
-						"description": "No Content - Media item not found"
+						"description": "No Content - Media object not found"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -101,6 +121,9 @@
 				}
 			},
 			"delete": {
+				"tags": [
+					"media"
+				],
 				"summary": "Delete Media by MediaCode",
 				"description": "deletes the Media object with the specified MediaCode",
 				"parameters": [
@@ -118,10 +141,138 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Success - Media object deleted"
+						"description": "Success - Media deleted"
 					},
 					"204": {
-						"description": "No Content - Media object not found"
+						"description": "No Content - Media not found"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/teacher": {
+			"post": {
+				"tags": [
+					"teacher"
+				],
+				"summary": "Post Teacher",
+				"description": "creates a new Teacher and returns the ObjectId",
+				"requestBody": {
+					"$ref": "#/components/requestBodies/CreateTeacherRequest"
+				},
+				"responses": {
+					"200": {
+						"description": "Success - Teacher created"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/teacher/{ObjectId}": {
+			"get": {
+				"tags": [
+					"teacher"
+				],
+				"summary": "Get Teacher by ObjectId",
+				"description": "returns a Teacher with a matching ObjectId",
+				"parameters": [
+					{
+						"name": "ObjectId",
+						"in": "path",
+						"description": "The ObjectId of the teacher to get",
+						"required": true,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string",
+							"pattern": "[a-fA-F0-9]{24}"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Teacher"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No Content - Teacher not found"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"teacher"
+				],
+				"summary": "Modify Teacher by ObjectId",
+				"description": "modifies an existing Teacher with the specified ObjectId",
+				"parameters": [
+					{
+						"name": "ObjectId",
+						"in": "path",
+						"description": "The ObjectId of the teacher to modify",
+						"required": true,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string",
+							"pattern": "[a-fA-F0-9]{24}"
+						}
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UpdateTeacherRequest"
+				},
+				"responses": {
+					"200": {
+						"description": "Success - Teacher modified"
+					},
+					"204": {
+						"description": "No Content - Teacher not found"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"teacher"
+				],
+				"summary": "Delete Teacher by ObjectId",
+				"description": "deletes the Teacher with the specified ObjectId",
+				"parameters": [
+					{
+						"name": "ObjectId",
+						"in": "path",
+						"description": "The ObjectId of the teacher to delete",
+						"required": true,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string",
+							"pattern": "[a-fA-F0-9]{24}"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success - Teacher deleted"
+					},
+					"204": {
+						"description": "No Content - Teacher not found"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -292,6 +443,43 @@
 					}
 				}
 			},
+			"Teacher": {
+				"type": "object",
+				"required": [
+					"_id",
+					"firstName",
+					"lastName",
+					"fullName"
+				],
+				"properties": {
+					"_id": {
+						"type": "string",
+						"description": "An ObjectId string used to uniquely identify this Teacher",
+						"pattern": "[a-fA-F0-9]{24}"
+					},
+					"firstName": {
+						"type": "string",
+						"description": "The teacher's first name"
+					},
+					"lastName": {
+						"type": "string",
+						"description": "The teacher's last name"
+					},
+					"fullName": {
+						"type": "string",
+						"description": "The teacher's full name, including all titles, prefixes, etc."
+					},
+					"bio": {
+						"type": "string",
+						"description": "A biography of the teacher"
+					},
+					"imageUrl": {
+						"type": "string",
+						"description": "A url to an image of the teacher",
+						"format": "url"
+					}
+				}
+			},
 			"MediaFile": {
 				"type": "object",
 				"required": [
@@ -407,9 +595,91 @@
 						"pattern": "[a-fA-F0-9]{24}"
 					}
 				}
+			},
+			"CreateTeacherRequest": {
+				"type": "object",
+				"required": [
+					"firstName",
+					"lastName",
+					"fullName"
+				],
+				"properties": {
+					"firstName": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 30,
+						"description": "The teacher's first name, nothing more"
+					},
+					"lastName": {
+						"minLength": 1,
+						"maxLength": 30,
+						"type": "string",
+						"description": "The teacher's last name, nothing more"
+					},
+					"fullName": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 60,
+						"description": "The teacher's full name, including all titles, prefixes, etc."
+					},
+					"bio": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 2000,
+						"description": "A biography of the teacher"
+					},
+					"imageUrl": {
+						"type": "string",
+						"description": "A url to an image of the teacher",
+						"format": "url"
+					}
+				}
+			},
+			"UpdateTeacherRequest": {
+				"type": "object",
+				"properties": {
+					"firstName": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 30,
+						"description": "The teacher's first name, nothing more"
+					},
+					"lastName": {
+						"minLength": 1,
+						"maxLength": 30,
+						"type": "string",
+						"description": "The teacher's last name, nothing more"
+					},
+					"fullName": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 60,
+						"description": "The teacher's full name, including all titles, prefixes, etc."
+					},
+					"bio": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 2000,
+						"description": "A biography of the teacher"
+					},
+					"imageUrl": {
+						"type": "string",
+						"description": "A url to an image of the teacher",
+						"format": "url"
+					}
+				}
 			}
 		},
 		"requestBodies": {
+			"CreateMediaRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/CreateMediaRequest"
+						}
+					}
+				}
+			},
 			"UpdateMediaRequest": {
 				"content": {
 					"application/json": {
@@ -419,11 +689,20 @@
 					}
 				}
 			},
-			"CreateMediaRequest": {
+			"CreateTeacherRequest": {
 				"content": {
 					"application/json": {
 						"schema": {
-							"$ref": "#/components/schemas/CreateMediaRequest"
+							"$ref": "#/components/schemas/CreateTeacherRequest"
+						}
+					}
+				}
+			},
+			"UpdateTeacherRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/UpdateTeacherRequest"
 						}
 					}
 				}

@@ -1,13 +1,13 @@
 import { Validator } from "../helpers/Validator";
 
 export class UpdateMediaRequest{
-    title?: string;
-    teacherId?: string;
-    text?: string;
-    seriesId?: string;
+    title: string;
+    teacherId: string;
+    text: string;
+    seriesId: string;
 
     constructor(obj?: UpdateMediaRequest){
-        if (!obj){
+        if (typeof obj != "object" || !obj){
             return;
         }
         this.title = obj.title;
@@ -19,17 +19,17 @@ export class UpdateMediaRequest{
     validate(): string{
         var validator = new Validator<UpdateMediaRequest>(this);
 
-        validator.propValidator("title", true)
+        validator.propValidator("title", false)
             .typeOf("string")
             .notEmpty()
             .maxLength(150);
 
-        validator.propValidator("teacherId", true)
+        validator.propValidator("teacherId", false)
             .typeOf("string")
             .notEmpty()
             .objectId();
 
-        validator.propValidator("text", true)
+        validator.propValidator("text", false)
             .typeOf("string")
             .notEmpty()
             .maxLength(100);

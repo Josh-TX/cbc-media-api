@@ -1,5 +1,7 @@
+import { ObjectId } from "bson";
+
 export class SimpleTeacherEntity {
-    _id: string;
+    _id: ObjectId;
     firstName: string;
     lastName: string;
     fullName: string;
