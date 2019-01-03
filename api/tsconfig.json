@@ -1,16 +1,18 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "resolveJsonModule": true,
         "moduleResolution": "node",
         "pretty": true,
         "sourceMap": false,
         "target": "es2017",
         "outDir": "./dist",
-        "baseUrl": "./src",
+        "baseUrl": "./",
         "noImplicitAny": true
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "test/**/*.ts"
     ],
     "exclude": [
         "node_modules"

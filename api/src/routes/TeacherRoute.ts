@@ -26,9 +26,9 @@ export class TeacherRoute {
             return;
         }
         let filter: Partial<TeacherEntity> = {"_id": objectId}
-        let entity: TeacherEntity = await this.db.collection("teacher").findOne(filter);
+        let entity: TeacherEntity = await this.db.collection<TeacherEntity>("teacher").findOne(filter);
         if (entity == null){
-            res.status(400).send("failed to find teacher for ObjectId " + req.params.id);
+            res.status(404).send("failed to find teacher for ObjectId " + req.params.id);
             return;
         }
         let teacher = new Teacher();
@@ -59,7 +59,7 @@ export class TeacherRoute {
         teacher.bio = request.bio;
         teacher.imageUrl = request.imageUrl;
 
-        let dbResult = await this.db.collection("teacher").insertOne(teacher);
+        let dbResult = await this.db.collection<TeacherEntity>("teacher").insertOne(teacher);
         res.send(dbResult.insertedId.toHexString());
     }
 
@@ -83,7 +83,7 @@ export class TeacherRoute {
         setProperties.bio = request.bio;
         setProperties.imageUrl = request.imageUrl;
 
-        await this.db.collection("teacher").updateOne(filter, {$set: setProperties});
+        await this.db.collection<TeacherEntity>("teacher").updateOne(filter, {$set: setProperties});
         res.json();
     }
     
@@ -94,7 +94,7 @@ export class TeacherRoute {
             return;
         }
         let filter: Partial<TeacherEntity> = {"_id": objectId}
-        let dbResult = await this.db.collection("teacher").deleteOne(filter);
+        let dbResult = await this.db.collection<TeacherEntity>("teacher").deleteOne(filter);
         let statusCode = dbResult.deletedCount ? 200 : 204;
         res.send(statusCode);
     }

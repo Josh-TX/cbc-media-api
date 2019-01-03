@@ -2,12 +2,14 @@
   "name": "cbc-media-api",
   "version": "1.0.0",
   "description": "a mean stack implementation of the countryside API",
-  "main": "dist/app.js",
+  "main": "dist/src/start.js",
   "scripts": {
     "build": "tsc",
-    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\"",
-    "start": "nodemon ./dist/app.js",
-    "prod": "npm run build && npm run start"
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/src/start.js\"",
+    "start": "nodemon ./dist/src/start.js",
+    "prod": "npm run build && npm run start",
+    "test": "mocha ./dist/test/*",
+    "build-and-test": "npm run build && mocha ./dist/test/*"
   },
   "author": "",
   "license": "ISC",
@@ -24,9 +26,14 @@
     "swagger-ui-express": "^4.0.1"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/supertest": "^2.0.7",
     "concurrently": "^4.0.1",
+    "mocha": "^5.2.0",
+    "mongodb-memory-server": "^2.9.1",
     "nodemon": "^1.18.4",
     "rimraf": "^2.6.2",
+    "supertest": "^3.3.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.3"
   }

@@ -29,9 +29,9 @@ export class MediaRoute {
     async getMediaByCode(req: Request, res: Response){
         let code = req.params.code;
         let filter: Partial<MediaEntity> = {"mediaCode": code};
-        let entity: MediaEntity = await this.db.collection("media").findOne(filter);
+        let entity: MediaEntity = await this.db.collection<MediaEntity>("media").findOne(filter);
         if (entity == null){
-            res.status(400).send("failed to find media for mediaCode " + code);
+            res.status(204).send("failed to find media for mediaCode " + code);
             return;
         }
         let media = new Media();
@@ -119,8 +119,8 @@ export class MediaRoute {
         mediaEntity.subCategory = request.subCategory;
         mediaEntity.part = request.part;
 
-        let dbResult = await this.db.collection("media").insertOne(mediaEntity);
-        res.send(mediaEntity.mediaCode);
+        let dbResult = await this.db.collection<MediaEntity>("media").insertOne(mediaEntity);
+        res.status(201).send(mediaEntity.mediaCode);
     }
 
     async updateMediaByCode(req: Request, res: Response){
@@ -162,17 +162,17 @@ export class MediaRoute {
         //todo: allow updated TextEntity
         //setProperties.text = request.text
 
-
-        let dbResult = await this.db.collection("media").updateOne(filter, {$set: setProperties});
-        res.json(dbResult);
+        let dbResult = await this.db.collection<MediaEntity>("media").updateOne(filter, {$set: setProperties});
+        let statusCode = dbResult.matchedCount ? 200 : 204;
+        res.sendStatus(statusCode);
     }
     
     async deleteMediaByCode(req: Request, res: Response){
         let code = req.params.code;
         let filter: Partial<MediaEntity> = {"mediaCode": code};
-        let dbResult = await this.db.collection("media").deleteOne(filter);
+        let dbResult = await this.db.collection<MediaEntity>("media").deleteOne(filter);
         let statusCode = dbResult.deletedCount ? 200 : 204;
-        res.send(statusCode);
+        res.sendStatus(statusCode);
     }
 
     private async getTeacherById(id: string): Promise<TeacherEntity | string>{
@@ -181,7 +181,7 @@ export class MediaRoute {
             return "failed to parse teacherId '" +  id + "' into an ObjectId";
         }
         let teacherFilter: Partial<TeacherEntity> = { '_id': teacherObjectId };
-        return this.db.collection("teacher").findOne(teacherFilter).then(teacherEntity => {
+        return this.db.collection<TeacherEntity>("teacher").findOne(teacherFilter).then(teacherEntity => {
             if (!teacherEntity){
                 return "failed to find teacher for _id " + id;
             }
@@ -195,7 +195,7 @@ export class MediaRoute {
             return "failed to parse seriesId '" +  id + "' into an ObjectId";
         }
         let seriesFilter: Partial<SeriesEntity> = { '_id': seriesObjectId };
-        return this.db.collection("teacher").findOne(seriesFilter).then(seriesEntity => {
+        return this.db.collection<SeriesEntity>("series").findOne(seriesFilter).then(seriesEntity => {
             if (!seriesEntity){
                 return "failed to find series for _id " + id;
             }

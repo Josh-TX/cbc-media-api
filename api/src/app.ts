@@ -2,59 +2,46 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { MediaRoute } from './routes/MediaRoute';
 import { TeacherRoute } from "./routes/TeacherRoute";
-import config from './config';
 import * as swaggerUi from 'swagger-ui-express';
-import * as fs from 'fs';
 import { MongoClient, Db } from "mongodb";
 import ExpressPromiseRouter from "express-promise-router";
+import { IConfig } from "./interfaces/IConfig";
+import * as openapi from "./openapi.json";
 
 
-class App {
-
-    public app: express.Application;
-
-    constructor() {
-        this.app = express();
+export function CreateApp(
+    config: IConfig, 
+    mongoClient: MongoClient
+): express.Express {
+    var app = express();
+    app.use(bodyParser.json({limit: '500kb'})); 
+    if (config.allowCors){
+        app.use(allowCors);
     }
-
-    async init(){
-        this.app.use(bodyParser.json({limit: '500kb'})); 
-        if (config.allowCors){
-            this.app.use(this.allowCors);
-        }
-        let swaggerDoc = JSON.parse(fs.readFileSync(config.openApiFile).toString());
-        this.app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-        this.app.use("/", express.static(config.staticDirectory));
-        var url = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.db}`;
-        console.log("connecting to " + url)
-        var client = await MongoClient.connect(url, {useNewUrlParser: true});
-        var router = ExpressPromiseRouter();
-        this.app.use("/", router);
-        new MediaRoute(router, client.db(config.mongodb.db));
-        new TeacherRoute(router, client.db(config.mongodb.db));
-        router.use(this.handleErrors);
-
-        this.app.listen(config.port, () => {
-            console.log('listening on port ' + config.port);
-        })
-        
+    app.use('/api', swaggerUi.serve, swaggerUi.setup(openapi));
+    app.use("/", express.static(config.staticDirectory));
+    var router = ExpressPromiseRouter();
+    app.use("/", router);
+    new MediaRoute(router, mongoClient.db(config.mongodb.db));
+    new TeacherRoute(router, mongoClient.db(config.mongodb.db));
+    if (config.showErrors){
+        router.use(handleErrorsWithMessage);
+    } else {
+        router.use(handleErrors);
     }
-
-    private allowCors(req: express.Request, res:express.Response, next: express.NextFunction) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-        next();
-    }
-
-    private handleErrors(err: Error, req: express.Request, res:express.Response, next: express.NextFunction) {
-        if (config.showErrors){
-            res.status(500).send(err.stack);
-        } else {
-            res.status(500).send();
-        }
-    }
+    return app
 }
 
-let application = new App();
-application.init();
-export default application;
+function allowCors(req: express.Request, res:express.Response, next: express.NextFunction) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    next();
+}
+
+function handleErrorsWithMessage(err: Error, req: express.Request, res:express.Response, next: express.NextFunction) {
+    res.status(500).send(err.stack);
+}
+
+function handleErrors(err: Error, req: express.Request, res:express.Response, next: express.NextFunction) {
+    res.status(500).send();
+}

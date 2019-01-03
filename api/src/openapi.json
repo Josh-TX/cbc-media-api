@@ -145,9 +145,6 @@
 					},
 					"204": {
 						"description": "No Content - Media not found"
-					},
-					"400": {
-						"description": "Bad Request"
 					}
 				}
 			}
