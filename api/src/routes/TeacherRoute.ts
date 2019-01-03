@@ -28,7 +28,7 @@ export class TeacherRoute {
         let filter: Partial<TeacherEntity> = {"_id": objectId}
         let entity: TeacherEntity = await this.db.collection<TeacherEntity>("teacher").findOne(filter);
         if (entity == null){
-            res.status(404).send("failed to find teacher for ObjectId " + req.params.id);
+            res.status(204).send("failed to find teacher for ObjectId " + req.params.id);
             return;
         }
         let teacher = new Teacher();
@@ -60,7 +60,7 @@ export class TeacherRoute {
         teacher.imageUrl = request.imageUrl;
 
         let dbResult = await this.db.collection<TeacherEntity>("teacher").insertOne(teacher);
-        res.send(dbResult.insertedId.toHexString());
+        res.status(201).send(dbResult.insertedId.toHexString());
     }
 
     async updateTeacherById(req: Request, res: Response){
@@ -77,14 +77,19 @@ export class TeacherRoute {
         }
         let filter: Partial<TeacherEntity> = {"_id": objectId}
         let setProperties: Partial<TeacherEntity> = {};
-        setProperties.firstName = request.firstName;
-        setProperties.lastName = request.lastName;
-        setProperties.fullName = request.fullName;
-        setProperties.bio = request.bio;
-        setProperties.imageUrl = request.imageUrl;
-
-        await this.db.collection<TeacherEntity>("teacher").updateOne(filter, {$set: setProperties});
-        res.json();
+        if (request.firstName)
+            setProperties.firstName = request.firstName;
+        if (request.lastName) 
+            setProperties.lastName = request.lastName;
+        if (request.fullName)
+            setProperties.fullName = request.fullName;
+        if (request.bio)
+            setProperties.bio = request.bio;
+        if (request.imageUrl)
+            setProperties.imageUrl = request.imageUrl;
+        let dbResult = await this.db.collection<TeacherEntity>("teacher").updateOne(filter, {$set: setProperties});
+        let statusCode = dbResult.matchedCount ? 200 : 204;
+        res.sendStatus(statusCode);
     }
     
     async deleteTeacherById(req: Request, res: Response){
@@ -96,6 +101,6 @@ export class TeacherRoute {
         let filter: Partial<TeacherEntity> = {"_id": objectId}
         let dbResult = await this.db.collection<TeacherEntity>("teacher").deleteOne(filter);
         let statusCode = dbResult.deletedCount ? 200 : 204;
-        res.send(statusCode);
+        res.sendStatus(statusCode);
     }
 }

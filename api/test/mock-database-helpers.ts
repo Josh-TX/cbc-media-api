@@ -66,7 +66,7 @@ export function createTeacherEntity(): TeacherEntity{
     teacherEntity.lastName = "last #" + randomNumber(999).toString();
     teacherEntity.fullName = "full #" + randomNumber(99999).toString();
     teacherEntity.bio = "I was created for no purpose other than testing # " + + randomNumber(999).toString();
-    teacherEntity.imageUrl = "www.img.com/" + randomNumber(999).toString();
+    teacherEntity.imageUrl = "http://img.com/" + randomNumber(999).toString();
 
     return teacherEntity;
 }

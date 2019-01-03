@@ -158,7 +158,8 @@ export class MediaRoute {
             setProperties.series.image = seriesResult.image;
             setProperties.series.imageSquare = seriesResult.imageSquare;
         }
-        setProperties.title = request.title;
+        if (request.title)
+            setProperties.title = request.title;
         //todo: allow updated TextEntity
         //setProperties.text = request.text
 

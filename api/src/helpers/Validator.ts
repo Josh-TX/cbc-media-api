@@ -117,7 +117,7 @@ class PropValidator<T>{
     }
 
     url(): PropValidator<T>{
-        if (!this.finished && /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.value)){
+        if (!this.finished && !/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.value)){
             this.errorContainer.error = this.key + " must be a valid url";
             this.finished = true;
         }

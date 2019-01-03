@@ -160,7 +160,7 @@
 					"$ref": "#/components/requestBodies/CreateTeacherRequest"
 				},
 				"responses": {
-					"200": {
+					"201": {
 						"description": "Success - Teacher created"
 					},
 					"400": {

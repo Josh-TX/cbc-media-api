@@ -90,6 +90,7 @@ describe("media API", function() {
 
         it("can post media", function(done) {
             var request = getRequestObject();
+            (<any>request).extraProperty = "hello";
             supertest(app)
                 .post("/media")
                 .send(request)
@@ -100,6 +101,7 @@ describe("media API", function() {
                         return done(err);
                     }
                     mockDatabaseHelpers.getMediaByCode(db, res.text).then(mediaEntity => {
+                        assert.equal(mediaEntity.mediaCode, res.text);
                         assert.equal(mediaEntity.dateRecorded, request.dateRecorded);
                         assert.equal(mediaEntity.title, request.title);
                         assert.equal(mediaEntity.category, request.category);
@@ -114,6 +116,7 @@ describe("media API", function() {
                         assert.equal(mediaEntity.series.title, seriesEntity.title);
                         assert.equal(mediaEntity.series.image, seriesEntity.image);
                         assert.equal(mediaEntity.series.imageSquare, seriesEntity.imageSquare);
+                        assert.strictEqual((<any>teacherEntity).extraProperty, undefined)
                     }).then(done).catch(done)
                 });
         });
@@ -187,6 +190,7 @@ describe("media API", function() {
             request.text = "Genesis" + Math.ceil(Math.random() * 50);
             request.teacherId = teacherEntity2._id.toHexString();
             request.seriesId = seriesEntity2._id.toHexString();
+            (<any>request).extraProperty = "hello";
 
 
             var res = await supertest(app)
@@ -210,6 +214,7 @@ describe("media API", function() {
             assert.equal(newMediaEntity.series.title, seriesEntity2.title);
             assert.equal(newMediaEntity.series.image, seriesEntity2.image);
             assert.equal(newMediaEntity.series.imageSquare, seriesEntity2.imageSquare);
+            assert.strictEqual((<any>newMediaEntity).extraProperty, undefined)
         });
 
         it("can modify just the media title", async function() {
