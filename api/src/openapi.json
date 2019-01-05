@@ -38,7 +38,7 @@
 					"$ref": "#/components/requestBodies/CreateMediaRequest"
 				},
 				"responses": {
-					"200": {
+					"201": {
 						"description": "Success - Media created"
 					},
 					"400": {
@@ -78,11 +78,8 @@
 							}
 						}
 					},
-					"204": {
-						"description": "No Content - Media object not found"
-					},
-					"400": {
-						"description": "Bad Request"
+					"404": {
+						"description": "Not Found - Media not found for specified MediaCode"
 					}
 				}
 			},
@@ -109,11 +106,11 @@
 					"$ref": "#/components/requestBodies/UpdateMediaRequest"
 				},
 				"responses": {
-					"200": {
+					"204": {
 						"description": "Success - Media object modified"
 					},
-					"204": {
-						"description": "No Content - Media object not found"
+					"404": {
+						"description": "Not Found - Media not found for specified MediaCode"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -140,11 +137,11 @@
 					}
 				],
 				"responses": {
-					"200": {
+					"204": {
 						"description": "Success - Media deleted"
 					},
-					"204": {
-						"description": "No Content - Media not found"
+					"404": {
+						"description": "Not Found - Media not found for specified MediaCode"
 					}
 				}
 			}
@@ -201,8 +198,8 @@
 							}
 						}
 					},
-					"204": {
-						"description": "No Content - Teacher not found"
+					"404": {
+						"description": "Not Found - Teacher not found for specified ObjectId"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -233,11 +230,11 @@
 					"$ref": "#/components/requestBodies/UpdateTeacherRequest"
 				},
 				"responses": {
-					"200": {
+					"204": {
 						"description": "Success - Teacher modified"
 					},
-					"204": {
-						"description": "No Content - Teacher not found"
+					"404": {
+						"description": "Not Found - Teacher not found for specified ObjectId"
 					},
 					"400": {
 						"description": "Bad Request"
@@ -265,11 +262,11 @@
 					}
 				],
 				"responses": {
-					"200": {
+					"204": {
 						"description": "Success - Teacher deleted"
 					},
-					"204": {
-						"description": "No Content - Teacher not found"
+					"404": {
+						"description": "Not Found - Teacher not found for specified ObjectId"
 					},
 					"400": {
 						"description": "Bad Request"

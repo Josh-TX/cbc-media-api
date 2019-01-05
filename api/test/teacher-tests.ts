@@ -28,10 +28,10 @@ describe("teacher API", function() {
                 .end(done);
         });
 
-        it("204s when the teacher was not found", function(done) {     
+        it("404s when the teacher was not found", function(done) {     
             supertest(app)
                 .get("/teacher/" + (new ObjectId()).toHexString())
-                .expect(204)
+                .expect(404)
                 .end(done);
         });
 
@@ -129,7 +129,7 @@ describe("teacher API", function() {
             var res = await supertest(app)
                 .put("/teacher/" + originalTeacherEntity._id)
                 .send(request)
-                .expect(200);
+                .expect(204);
 
             var newTeacherEntity = await mockDatabaseHelpers.getTeacherById(db, originalTeacherEntity._id.toHexString());
             
@@ -145,7 +145,6 @@ describe("teacher API", function() {
         it("can modify just the firstName", async function() {
             let originalTeacherEntity = mockDatabaseHelpers.createTeacherEntity();
             await mockDatabaseHelpers.insertTeacher(db, originalTeacherEntity);
-            var testTeacherEntity = await mockDatabaseHelpers.getTeacherById(db, originalTeacherEntity._id.toHexString());
 
             var request = new UpdateTeacherRequest();
             request.firstName = "first #" +  Math.ceil(Math.random() * 999);
@@ -153,7 +152,7 @@ describe("teacher API", function() {
             var res = await supertest(app)
                 .put("/teacher/" + originalTeacherEntity._id)
                 .send(request)
-                .expect(200);
+                .expect(204);
 
             var newTeacherEntity = await mockDatabaseHelpers.getTeacherById(db, originalTeacherEntity._id.toHexString());
             assert.equal(newTeacherEntity._id.toHexString(), originalTeacherEntity._id.toHexString());
@@ -164,23 +163,35 @@ describe("teacher API", function() {
             assert.equal(newTeacherEntity.imageUrl, originalTeacherEntity.imageUrl);
         });
 
-        it("204s when the teacher was not found", function(done) {
+        it("404s when the teacher was not found", function(done) {
             var request = new UpdateTeacherRequest();
             request.firstName = "first #" +  Math.ceil(Math.random() * 999);
             supertest(app)
             .put("/teacher/" + (new ObjectId).toHexString())
                 .send(request)
-                .expect(204)
+                .expect(404)
                 .end(done);
         });
 
-        it("404s when no media code is specified", function(done) {
+        it("404s when no id is specified", function(done) {
             var request = new UpdateTeacherRequest();
-            request.firstName = "first #" +  Math.ceil(Math.random() * 999);
+            request.firstName = "first #" +  Math.ceil(Math.random() * 999);     
             supertest(app)
                 .put("/teacher")
                 .send(request)
                 .expect(404)
+                .end(done);
+        });
+
+        it("400s when the id is invalid", function(done) {  
+            var request = new UpdateTeacherRequest();
+            request.firstName = "first #" +  Math.ceil(Math.random() * 999);        
+            supertest(app)
+                .put("/teacher/hello")
+                .send(request)
+                .expect(400)
+                .expect("content-type", /text/)
+                .expect(/failed to parse/)
                 .end(done);
         });
 
@@ -204,19 +215,19 @@ describe("teacher API", function() {
 
             var res = await supertest(app)
                 .delete("/teacher/" + originalTeacherEntity._id.toHexString())
-                .expect(200);
+                .expect(204);
 
             var newTeacherEntity = await mockDatabaseHelpers.getTeacherById(db, originalTeacherEntity._id.toHexString());
             assert.equal(newTeacherEntity, null);
         });
 
-        it("204s when the teacher was not found", async function() {
+        it("404s when the teacher was not found", async function() {
             let originalMediaEntity = mockDatabaseHelpers.createMediaEntity();
             await mockDatabaseHelpers.insertMedia(db, originalMediaEntity);
 
             var res = await supertest(app)
                 .delete("/teacher/" + (new ObjectId).toHexString())
-                .expect(204);
+                .expect(404);
 
             var newMediaEntity = await mockDatabaseHelpers.getMediaByCode(db, originalMediaEntity.mediaCode);
             assert.notEqual(newMediaEntity, null);
@@ -226,6 +237,15 @@ describe("teacher API", function() {
             supertest(app)
                 .delete("/teacher")
                 .expect(404)
+                .end(done);
+        });
+
+        it("400s when the id is invalid", function(done) {
+            supertest(app)
+                .delete("/teacher/hello")
+                .expect(400)
+                .expect("content-type", /text/)
+                .expect(/failed to parse/)
                 .end(done);
         });
     });

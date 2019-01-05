@@ -38,10 +38,10 @@ describe("media API", function() {
                 .end(done);
         });
 
-        it("204s when the media was not found", function(done) {     
+        it("404s when the media was not found", function(done) {     
             supertest(app)
                 .get("/media/hello")
-                .expect(204)
+                .expect(404)
                 .end(done);
         });
 
@@ -196,7 +196,7 @@ describe("media API", function() {
             var res = await supertest(app)
                 .put("/media/" + originalMediaEntity.mediaCode)
                 .send(request)
-                .expect(200);
+                .expect(204);
             var newMediaEntity = await mockDatabaseHelpers.getMediaByCode(db, originalMediaEntity.mediaCode);
             
             assert.equal(newMediaEntity.mediaCode, originalMediaEntity.mediaCode);
@@ -227,7 +227,7 @@ describe("media API", function() {
             var res = await supertest(app)
                 .put("/media/" + originalMediaEntity.mediaCode)
                 .send(request)
-                .expect(200);
+                .expect(204);
             var newMediaEntity = await mockDatabaseHelpers.getMediaByCode(db, originalMediaEntity.mediaCode);
             
             assert.equal(newMediaEntity.mediaCode, originalMediaEntity.mediaCode);
@@ -237,13 +237,13 @@ describe("media API", function() {
             assert.equal(newMediaEntity.series._id.toHexString(), originalMediaEntity.series._id.toHexString());
         });
 
-        it("204s when the media was not found", function(done) {
+        it("404s when the media was not found", function(done) {
             var request = new UpdateMediaRequest();
             request.title = "title #" + Math.ceil(Math.random() * 9999);
             supertest(app)
                 .put("/media/hello")
                 .send(request)
-                .expect(204)
+                .expect(404)
                 .end(done);
         });
 
@@ -289,19 +289,19 @@ describe("media API", function() {
 
             var res = await supertest(app)
                 .delete("/media/" + originalMediaEntity.mediaCode)
-                .expect(200);
+                .expect(204);
 
             var newMediaEntity = await mockDatabaseHelpers.getMediaByCode(db, originalMediaEntity.mediaCode);
             assert.equal(newMediaEntity, null);
         });
 
-        it("204s when the media was not found", async function() {
+        it("404s when the media was not found", async function() {
             let originalMediaEntity = mockDatabaseHelpers.createMediaEntity();
             await mockDatabaseHelpers.insertMedia(db, originalMediaEntity);
 
             var res = await supertest(app)
                 .delete("/media/hello")
-                .expect(204);
+                .expect(404);
 
             var newMediaEntity = await mockDatabaseHelpers.getMediaByCode(db, originalMediaEntity.mediaCode);
             assert.notEqual(newMediaEntity, null);

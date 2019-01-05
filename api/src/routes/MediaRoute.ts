@@ -31,7 +31,7 @@ export class MediaRoute {
         let filter: Partial<MediaEntity> = {"mediaCode": code};
         let entity: MediaEntity = await this.db.collection<MediaEntity>("media").findOne(filter);
         if (entity == null){
-            res.status(204).send("failed to find media for mediaCode " + code);
+            res.status(404).send("failed to find media for mediaCode " + code);
             return;
         }
         let media = new Media();
@@ -164,7 +164,7 @@ export class MediaRoute {
         //setProperties.text = request.text
 
         let dbResult = await this.db.collection<MediaEntity>("media").updateOne(filter, {$set: setProperties});
-        let statusCode = dbResult.matchedCount ? 200 : 204;
+        let statusCode = dbResult.matchedCount ? 204 : 404;
         res.sendStatus(statusCode);
     }
     
@@ -172,7 +172,7 @@ export class MediaRoute {
         let code = req.params.code;
         let filter: Partial<MediaEntity> = {"mediaCode": code};
         let dbResult = await this.db.collection<MediaEntity>("media").deleteOne(filter);
-        let statusCode = dbResult.deletedCount ? 200 : 204;
+        let statusCode = dbResult.deletedCount ? 204 : 404;
         res.sendStatus(statusCode);
     }
 
